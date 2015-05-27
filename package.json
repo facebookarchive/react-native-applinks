@@ -1,0 +1,32 @@
+{
+  "name": "react-native-applinks",
+  "version": "0.0.1",
+  "description": "AppLinks support for React Native. applinks.org",
+  "main": "index.js",
+  "author": {
+    "name": "Konstantin Novikov",
+    "email": "nov@facebook.com",
+    "url": "http://github.com/knovikov"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "~0.1.5"
+  },
+  "dependencies": {
+    "parse5": "~1.4.2",
+    "url": "~0.10.3"
+  },
+  "peerDependencies": {
+    "react-native": ">=0.4.1"
+  },
+  "homepage": "http://facebook.github.io/react-native-applinks/",
+  "keywords": [
+    "react",
+    "applinks",
+    "react native",
+    "react native applinks"
+   ],
+  "license": "BSD License"
+}
