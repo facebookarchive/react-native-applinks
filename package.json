@@ -21,7 +21,7 @@
   "peerDependencies": {
     "react-native": ">=0.4.1"
   },
-  "homepage": "http://facebook.github.io/react-native-applinks/",
+  "homepage": "http://github.com/facebook/react-native-applinks/",
   "keywords": [
     "react",
     "applinks",
