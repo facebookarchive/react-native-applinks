@@ -1,6 +1,6 @@
 {
   "name": "react-native-applinks",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "AppLinks support for React Native. applinks.org",
   "main": "index.js",
   "author": {
@@ -19,7 +19,7 @@
     "url": "~0.10.3"
   },
   "peerDependencies": {
-    "react-native": ">=0.4.1"
+    "react-native": ">=0.17.0"
   },
   "homepage": "http://github.com/facebook/react-native-applinks/",
   "keywords": [
