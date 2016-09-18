@@ -17,11 +17,11 @@ var Linking = require('Linking');
  * Mocking Linking calls
  */
 Linking.canOpenURL = jest.genMockFunction()
-  .mockImplementation(function(url, supported) {
-  console.log('Mock call Linking.canOpenURL:' + url);
-  var isSupported = url.indexOf('_v1') >= 0;
-  supported(isSupported);
-});
+  .mockImplementation(function(url) {
+    console.log('Mock call Linking.canOpenURL:' + url);
+    var isSupported = url.indexOf('_v1') >= 0;
+    return Promise.resolve(isSupported);
+  });
 
 describe('App Links Navigation', function() {
   it('Targets priorities test', function() {
@@ -42,30 +42,20 @@ describe('App Links Navigation', function() {
       }
     );
 
-    alNavigationIOS.fetchUrlFromAppLink(
-      al,
-      (url) => { expect(url).toContain('ios_v1') }
-    );
+    alNavigationIOS.fetchUrlFromAppLink(al)
+      .then((url) => { expect(url).toContain('ios_v1') });
 
-    alNavigationIPhone.fetchUrlFromAppLink(
-      al,
-      (url) => { expect(url).toContain('iphone_v1') }
-    );
+    alNavigationIPhone.fetchUrlFromAppLink(al)
+      .then((url) => { expect(url).toContain('iphone_v1') });
 
-    alNavigationIPad.fetchUrlFromAppLink(
-      al,
-      (url) => { expect(url).toContain('ipad_v1') }
-    );
+    alNavigationIPad.fetchUrlFromAppLink(al)
+      .then((url) => { expect(url).toContain('ipad_v1') });
 
-    alNavigationAndroid.fetchUrlFromAppLink(
-      al,
-      (url) => { expect(url).toContain('android_v1') }
-    );
+    alNavigationAndroid.fetchUrlFromAppLink(al)
+      .then((url) => { expect(url).toContain('android_v1') });
 
-    alNavigationDefault.fetchUrlFromAppLink(
-      al,
-      (url) => { expect(url).toContain('ios_v1') }
-    );
+    alNavigationDefault.fetchUrlFromAppLink(al)
+      .then((url) => { expect(url).toContain('ios_v1') });
   });
 
   it('Wrong platform test', function() {

@@ -17,17 +17,14 @@ var parse5 = require('parse5');
 var AppLink = require('./AppLink');
 
 class NativeAppLinkResolver extends AppLinkResolver {
-  resolve(web_url: string, success: Function, error: Function) {
+  resolve(web_url: string) {
     var webUrl = super.normalizeUrl(web_url);
 
-    fetch(webUrl, {method: 'get', headers: {'Prefer-Html-Meta-Tags': 'al'}})
+    return fetch(webUrl, {method: 'get', headers: {'Prefer-Html-Meta-Tags': 'al'}})
       .then(res => res.text())
       .then((body) => {
         var appLinkHost = NativeAppLinkResolver.parseHTML(body);
-        success(new AppLink(webUrl, appLinkHost));
-      })
-      .catch(function(err) {
-        error(err);
+        return new AppLink(webUrl, appLinkHost);
       });
   }
 

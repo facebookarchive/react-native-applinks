@@ -42,17 +42,14 @@ class AppLinkNavigation {
     }
   }
 
-  fetchUrlFromWebUrl(web_url: string, success: Function, error: Function) {
-    this._appLinkResolver.resolve(
-      web_url,
-      (al) => { this.fetchUrlFromAppLink(al, success, error) },
-      error
-    );
+  fetchUrlFromWebUrl(web_url: string): Promise<any> {
+    return this._appLinkResolver.resolve(web_url)
+      .then((al) => this.fetchUrlFromAppLink(al));
   }
 
-  fetchUrlFromAppLink(al: AppLink, success: Function, error: Function) {
+  fetchUrlFromAppLink(al: AppLink): Promise<any> {
     if (!al) {
-      error('Empty applink object.');
+      return Promise.reject(new Error('Empty applink object.'));
     }
 
     var targets;
@@ -67,31 +64,32 @@ class AppLinkNavigation {
       targets = al.getTargets(this._platform);
     }
 
-    this._findBestTarget(targets, 0,
-      (target) => {
-        success(this._addApplinkDataToUrl(target.url, al.getURL()))
-      },
-      () => {
-        success(this._addApplinkDataToUrl(al.getWebUrl(), al.getURL()))
-      }
-    );
+    return this._findBestTarget(targets, 0)
+      .then((target) => {
+        if (target) {
+          return this._addApplinkDataToUrl(target.url, al.getURL());
+        } else {
+          return this._addApplinkDataToUrl(al.getWebUrl(), al.getURL());
+        }
+      });
   }
 
   /**
    * Iterating through the collection of app link targets.
    * Selecting first one that can be opened.
    */
-  _findBestTarget(targets: Array, index: number, onFound: Function, onNotFound: Function) {
+  _findBestTarget(targets: Array, index: number): Promise<any> {
     if (index >= targets.length) {
-      onNotFound();
+      return Promise.resolve(false);
     } else {
-      Linking.canOpenURL(targets[index].url, (supported) => {
-        if (supported) {
-          onFound(targets[index]);
-        } else {
-          this._findBestTarget(targets, ++index, onFound, onNotFound);
-        }
-      });
+      return Linking.canOpenURL(targets[index].url)
+        .then((supported) => {
+          if (supported) {
+            return targets[index];
+          } else {
+            return this._findBestTarget(targets, ++index);
+          }
+        });
     }
   }
 

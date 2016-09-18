@@ -20,7 +20,7 @@ class IndexAPIAppLinkResolver extends AppLinkResolver {
     this._facebookToken = facebook_token;
   }
 
-  resolve(web_url, success, error) {
+  resolve(web_url) {
     var webUrl = super.normalizeUrl(web_url);
 
     if (!this._facebookToken) {
@@ -35,13 +35,10 @@ class IndexAPIAppLinkResolver extends AppLinkResolver {
       + encodeURIComponent(this._facebookToken);
     indexAPIEndpoint = super.normalizeUrl(indexAPIEndpoint);
 
-    fetch(indexAPIEndpoint)
+    return fetch(indexAPIEndpoint)
       .then(res => res.json())
       .then((json) => {
-        success(new AppLink(webUrl, json[webUrl].app_links));
-      })
-      .catch(function(err) {
-        error(err);
+        return new AppLink(webUrl, json[webUrl].app_links);
       });
   }
 }
