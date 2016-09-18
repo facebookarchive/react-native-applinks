@@ -13,7 +13,7 @@
 
 var AppLinkResolver = require('./AppLinkResolver');
 
-var Parser = require('parse5').Parser;
+var parse5 = require('parse5');
 var AppLink = require('./AppLink');
 
 class NativeAppLinkResolver extends AppLinkResolver {
@@ -36,8 +36,7 @@ class NativeAppLinkResolver extends AppLinkResolver {
    * Learn App Links meta tags schema at http://applinks.org/
    */
   static parseHTML(html_str: String) {
-    var parser = new Parser();
-    var dom = parser.parse(html_str);
+    var dom = parse5.parse(html_str);
     var html = dom.childNodes.filter(n => n.tagName === 'html')[0];
     var head = html.childNodes.filter(n => n.tagName === 'head')[0];
     var metaTags = head.childNodes.filter(t => t.tagName === 'meta');
