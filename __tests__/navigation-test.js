@@ -11,14 +11,14 @@
 var AppLink = require('../AppLink');
 var AppLinkNavigation = require('../AppLinkNavigation');
 var AppLinkResolver = require('../AppLinkResolver');
-var LinkingIOS = require('LinkingIOS');
+var Linking = require('Linking');
 
 /**
- * Mocking LinkingIOS calls
+ * Mocking Linking calls
  */
-LinkingIOS.canOpenURL = jest.genMockFunction()
+Linking.canOpenURL = jest.genMockFunction()
   .mockImplementation(function(url, supported) {
-  console.log('Mock call LinkingIOS.canOpenURL:' + url);
+  console.log('Mock call Linking.canOpenURL:' + url);
   var isSupported = url.indexOf('_v1') >= 0;
   supported(isSupported);
 });
@@ -29,6 +29,7 @@ describe('App Links Navigation', function() {
     var alNavigationIOS = new AppLinkNavigation(resolver, null, 'ios');
     var alNavigationIPhone = new AppLinkNavigation(resolver, null, 'iphone');
     var alNavigationIPad = new AppLinkNavigation(resolver, null, 'ipad');
+    var alNavigationAndroid = new AppLinkNavigation(resolver, null, 'android');
     var alNavigationDefault = new AppLinkNavigation(resolver);
 
     var al = new AppLink(
@@ -36,7 +37,8 @@ describe('App Links Navigation', function() {
       {
         ios: [{url: 'ios_v2://home'}, {url: 'ios_v1://home'}],
         iphone: [{url: 'iphone_v2://home'}, {url: 'iphone_v1://home'}],
-        ipad: [{url: 'ipad_v2://home'}, {url: 'ipad_v1://home'}]
+        ipad: [{url: 'ipad_v2://home'}, {url: 'ipad_v1://home'}],
+        android: [{url: 'android_v2://home'}, {url: 'android_v1://home'}]
       }
     );
 
@@ -53,6 +55,11 @@ describe('App Links Navigation', function() {
     alNavigationIPad.fetchUrlFromAppLink(
       al,
       (url) => { expect(url).toContain('ipad_v1') }
+    );
+
+    alNavigationAndroid.fetchUrlFromAppLink(
+      al,
+      (url) => { expect(url).toContain('android_v1') }
     );
 
     alNavigationDefault.fetchUrlFromAppLink(

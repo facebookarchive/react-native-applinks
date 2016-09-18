@@ -11,8 +11,8 @@
  */
 'use strict';
 
-var React = require('react-native');
-var { LinkingIOS } = React;
+var React = require('react');
+var { Linking, Platform } = require('react-native');
 var AppLinkURL = require('./AppLinkURL');
 
 var USER_AGENT = 'react-native-applinks 0.0.1';
@@ -30,11 +30,12 @@ class AppLinkNavigation {
   ) {
     this._appLinkResolver = app_link_resolver;
     this._refererAppLink = referer_app_link;
-    this._platform = platform || 'ios';
+    this._platform = platform || Platform.OS;
     switch (this._platform) {
       case 'iphone':
       case 'ipad':
       case 'ios':
+      case 'android':
         break;
       default:
         throw 'Unexpected platform: ' + platform;
@@ -54,12 +55,16 @@ class AppLinkNavigation {
       error('Empty applink object.');
     }
 
-    var targets = al.getTargets('ios');
+    var targets;
 
     if (this._platform === 'iphone') {
+      targets = al.getTargets('ios');
       targets = al.getTargets('iphone').concat(targets);
     } else if (this._platform === 'ipad') {
+      targets = al.getTargets('ios');
       targets = al.getTargets('ipad').concat(targets);
+    } else {
+      targets = al.getTargets(this._platform);
     }
 
     this._findBestTarget(targets, 0,
@@ -80,7 +85,7 @@ class AppLinkNavigation {
     if (index >= targets.length) {
       onNotFound();
     } else {
-      LinkingIOS.canOpenURL(targets[index].url, (supported) => {
+      Linking.canOpenURL(targets[index].url, (supported) => {
         if (supported) {
           onFound(targets[index]);
         } else {
