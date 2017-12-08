@@ -8,13 +8,6 @@
  */
 'use strict';
 
-jest
-  .dontMock('parse5')
-  .dontMock('url')
-  .dontMock('../AppLinkURL')
-  .dontMock('../NativeAppLinkResolver')
-  .dontMock('../AppLink');
-
 var AppLink = require('../AppLink');
 var NativeAppLinkResolver = require('../NativeAppLinkResolver');
 var AppLinkURL = require('../AppLinkURL');

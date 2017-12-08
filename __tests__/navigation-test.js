@@ -8,28 +8,20 @@
  */
 'use strict';
 
-jest
-  .dontMock('parse5')
-  .dontMock('url')
-  .dontMock('../AppLinkURL')
-  .dontMock('../NativeAppLinkResolver')
-  .dontMock('../AppLink')
-  .dontMock('../AppLinkNavigation');
-
 var AppLink = require('../AppLink');
 var AppLinkNavigation = require('../AppLinkNavigation');
 var AppLinkResolver = require('../AppLinkResolver');
-var LinkingIOS = require('LinkingIOS');
+var Linking = require('Linking');
 
 /**
- * Mocking LinkingIOS calls
+ * Mocking Linking calls
  */
-LinkingIOS.canOpenURL = jest.genMockFunction()
-  .mockImplementation(function(url, supported) {
-  console.log('Mock call LinkingIOS.canOpenURL:' + url);
-  var isSupported = url.indexOf('_v1') >= 0;
-  supported(isSupported);
-});
+Linking.canOpenURL = jest.genMockFunction()
+  .mockImplementation(function(url) {
+    console.log('Mock call Linking.canOpenURL:' + url);
+    var isSupported = url.indexOf('_v1') >= 0;
+    return Promise.resolve(isSupported);
+  });
 
 describe('App Links Navigation', function() {
   it('Targets priorities test', function() {
@@ -37,6 +29,7 @@ describe('App Links Navigation', function() {
     var alNavigationIOS = new AppLinkNavigation(resolver, null, 'ios');
     var alNavigationIPhone = new AppLinkNavigation(resolver, null, 'iphone');
     var alNavigationIPad = new AppLinkNavigation(resolver, null, 'ipad');
+    var alNavigationAndroid = new AppLinkNavigation(resolver, null, 'android');
     var alNavigationDefault = new AppLinkNavigation(resolver);
 
     var al = new AppLink(
@@ -44,29 +37,25 @@ describe('App Links Navigation', function() {
       {
         ios: [{url: 'ios_v2://home'}, {url: 'ios_v1://home'}],
         iphone: [{url: 'iphone_v2://home'}, {url: 'iphone_v1://home'}],
-        ipad: [{url: 'ipad_v2://home'}, {url: 'ipad_v1://home'}]
+        ipad: [{url: 'ipad_v2://home'}, {url: 'ipad_v1://home'}],
+        android: [{url: 'android_v2://home'}, {url: 'android_v1://home'}]
       }
     );
 
-    alNavigationIOS.fetchUrlFromAppLink(
-      al,
-      (url) => { expect(url).toContain('ios_v1') }
-    );
+    alNavigationIOS.fetchUrlFromAppLink(al)
+      .then((url) => { expect(url).toContain('ios_v1') });
 
-    alNavigationIPhone.fetchUrlFromAppLink(
-      al,
-      (url) => { expect(url).toContain('iphone_v1') }
-    );
+    alNavigationIPhone.fetchUrlFromAppLink(al)
+      .then((url) => { expect(url).toContain('iphone_v1') });
 
-    alNavigationIPad.fetchUrlFromAppLink(
-      al,
-      (url) => { expect(url).toContain('ipad_v1') }
-    );
+    alNavigationIPad.fetchUrlFromAppLink(al)
+      .then((url) => { expect(url).toContain('ipad_v1') });
 
-    alNavigationDefault.fetchUrlFromAppLink(
-      al,
-      (url) => { expect(url).toContain('ios_v1') }
-    );
+    alNavigationAndroid.fetchUrlFromAppLink(al)
+      .then((url) => { expect(url).toContain('android_v1') });
+
+    alNavigationDefault.fetchUrlFromAppLink(al)
+      .then((url) => { expect(url).toContain('ios_v1') });
   });
 
   it('Wrong platform test', function() {

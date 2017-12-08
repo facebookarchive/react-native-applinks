@@ -14,8 +14,8 @@
 var URL = require('url');
 
 class AppLinkResolver {
-  resolve(web_url: String, success, error) {
-    throw 'Not implemented';
+  resolve(web_url: String): Promise<any> {
+    return Promise.reject(new Error('Not implemented'));
   }
 
   normalizeUrl(url: String): String {
